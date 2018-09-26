@@ -276,7 +276,26 @@ void MyMesh::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivisions,
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	//GenerateCube(a_fRadius * 2.0f, a_v3Color);
+
+	double angle = 2.0 * PI / a_nSubdivisions;
+	for (int i = 0; i < a_nSubdivisions; i++) {		
+		double currentAngle = angle * i;
+		double nextAngle = angle * (i + 1);
+
+		//generate bottom face
+		vector3 bottom1 = vector3(0, -a_fHeight / 2.0, 0); // bottom center of mesh
+		vector3 bottom2 = vector3(a_fRadius * cos(currentAngle), -a_fHeight/2.0, a_fRadius * sin(currentAngle));
+		vector3 bottom3 = vector3(a_fRadius * cos(nextAngle), -a_fHeight/2.0, a_fRadius * sin(nextAngle));
+		AddTri(bottom1, bottom2, bottom3);
+
+		//generate side faces
+		vector3 side1 = vector3(0, a_fHeight / 2.0, 0); // top center of mesh
+		vector3 side3 = vector3(a_fRadius * cos(currentAngle), -a_fHeight / 2.0, a_fRadius * sin(currentAngle));
+		vector3 side2 = vector3(a_fRadius * cos(nextAngle), -a_fHeight / 2.0, a_fRadius * sin(nextAngle));
+		AddTri(side1, side2, side3);
+	}
+	
 	// -------------------------------
 
 	// Adding information about color
@@ -300,7 +319,29 @@ void MyMesh::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisi
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	//GenerateCube(a_fRadius * 2.0f, a_v3Color);
+
+	double angle = 2.0 * PI / a_nSubdivisions;
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		double currentAngle = angle * i;
+		double nextAngle = angle * (i + 1);
+
+		//generate bottom face
+		vector3 bottom1 = vector3(0, -a_fHeight / 2.0, 0); // bottom center of mesh
+		vector3 bottom2 = vector3(a_fRadius * cos(currentAngle), -a_fHeight / 2.0, a_fRadius * sin(currentAngle));
+		vector3 bottom3 = vector3(a_fRadius * cos(nextAngle), -a_fHeight / 2.0, a_fRadius * sin(nextAngle));
+		AddTri(bottom1, bottom2, bottom3);
+
+		//generate top face
+		vector3 top1 = vector3(0, a_fHeight / 2.0, 0); // bottom center of mesh
+		vector3 top2 = vector3(a_fRadius * cos(currentAngle), a_fHeight / 2.0, a_fRadius * sin(currentAngle));
+		vector3 top3 = vector3(a_fRadius * cos(nextAngle), a_fHeight / 2.0, a_fRadius * sin(nextAngle));
+		AddTri(top1, top3, top2);
+
+		//generate side faces by connecting the outer points
+		AddQuad(top2, top3, bottom2, bottom3);
+	}
+
 	// -------------------------------
 
 	// Adding information about color
@@ -330,7 +371,29 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 	Init();
 
 	// Replace this with your code
-	GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+	//GenerateCube(a_fOuterRadius * 2.0f, a_v3Color);
+
+	double angle = 2 * PI / a_nSubdivisions;
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		double currentAngle = angle * i;
+		double nextAngle = angle * (i + 1);
+
+		vector3 bottom2 = vector3(a_fInnerRadius * cos(currentAngle), -a_fHeight / 2.0, a_fInnerRadius * sin(currentAngle)); //bottomLeft
+		vector3 bottom1 = vector3(a_fInnerRadius * cos(nextAngle), -a_fHeight / 2.0, a_fInnerRadius * sin(nextAngle)); //bottomRight
+		vector3 bottom4 = vector3(a_fOuterRadius * cos(currentAngle), -a_fHeight / 2.0, a_fOuterRadius * sin(currentAngle)); //topLeft
+		vector3 bottom3 = vector3(a_fOuterRadius * cos(nextAngle), -a_fHeight / 2.0, a_fOuterRadius * sin(nextAngle)); //topRight
+		AddQuad(bottom1, bottom2, bottom3, bottom4);
+
+		vector3 top1 = vector3(a_fInnerRadius * cos(currentAngle), a_fHeight / 2.0, a_fInnerRadius * sin(currentAngle)); //bottomLeft
+		vector3 top2 = vector3(a_fInnerRadius * cos(nextAngle), a_fHeight / 2.0, a_fInnerRadius * sin(nextAngle)); //bottomRight
+		vector3 top3 = vector3(a_fOuterRadius * cos(currentAngle), a_fHeight / 2.0, a_fOuterRadius * sin(currentAngle)); //topLeft
+		vector3 top4 = vector3(a_fOuterRadius * cos(nextAngle), a_fHeight / 2.0, a_fOuterRadius * sin(nextAngle)); //topRight
+		AddQuad(top1, top2, top3, top4);
+
+		//generate side faces
+		AddQuad(bottom3, bottom4, top4, top3);
+		AddQuad(bottom2, bottom1, top1, top2);
+	}
 	// -------------------------------
 
 	// Adding information about color
@@ -386,8 +449,64 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	Release();
 	Init();
 
-	// Replace this with your code
-	GenerateCube(a_fRadius * 2.0f, a_v3Color);
+	//Replace this with your code
+	//GenerateCube(a_fRadius * 2.0f, a_v3Color);
+
+
+	double angle = 2.0 * PI / a_nSubdivisions;
+	int z = 0;
+	for (int i = 0; i < a_nSubdivisions; i++) {
+		double currentAngle = angle * i;
+		double nextAngle = angle * (i + 1);
+		for (int y = 0; y < 4; y++) {
+			vector3 point1;
+			vector3 point2;
+			vector3 point3;
+			vector3 point4;
+
+			if (y > 1) { //stick out
+				point1 = vector3(a_fRadius * cosf(currentAngle), y, (z + a_fRadius) * sinf(currentAngle));
+				point2 = vector3(a_fRadius * cosf(nextAngle), y, (z + a_fRadius) * sinf(nextAngle));
+				z--;
+				point3 = vector3(a_fRadius * cosf(currentAngle), y, (z + a_fRadius) * sinf(currentAngle));
+				point4 = vector3(a_fRadius * cosf(nextAngle), y, (z + a_fRadius) * sinf(nextAngle));
+			}
+			else { //stick in
+				point1 = vector3(0, y, z + a_fRadius * sinf(currentAngle));
+				point2 = vector3(1, y, z + z + a_fRadius * sinf(nextAngle));
+				z++;
+				point3 = vector3(0, y, z + a_fRadius * sinf(currentAngle));
+				point4 = vector3(1, y, z + a_fRadius * sinf(nextAngle));
+			}
+
+			AddQuad(point1, point2, point3, point4);
+			
+		}
+	}
+
+	//std::vector<std::vector<vector3>> lists = std::vector<std::vector<vector3>>();
+	//for (int i = 0; i < a_nSubdivisions; i++) {
+	//	std::vector<vector3> ring = std::vector<vector3>();
+	//	for (int j = 0; j < a_nSubdivisions; j++){
+	//		double currentAngle = angle * i;
+
+	//		ring.push_back(vector3(a_fRadius * cosf(currentAngle), a_fRadius / 2.0 - (a_fRadius / a_nSubdivisions * i), a_fRadius * sinf(currentAngle)));
+	//	}
+	//	lists.push_back(ring);
+	//}
+	//
+
+	//for (int i = 1; i < a_nSubdivisions - 1; i++) {
+	//	for (int j = 1; j < a_nSubdivisions - 1; j++)
+	//	{
+	//		std::cout << lists[i][j].x << " " << lists[i][j].y  << " " << lists[i][j].z << std::endl;
+	//		std::cout << lists[i][j].length() << std::endl;
+	//		AddQuad(lists[i][j], lists[i][j + 1], lists[i + 1][j], lists[i + 1][j + 1]);
+	//	}
+	//}
+
+
+
 	// -------------------------------
 
 	// Adding information about color
