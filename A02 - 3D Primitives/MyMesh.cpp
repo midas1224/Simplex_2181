@@ -378,12 +378,14 @@ void MyMesh::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float a_fH
 		double currentAngle = angle * i;
 		double nextAngle = angle * (i + 1);
 
+		//bottom of the tube
 		vector3 bottom2 = vector3(a_fInnerRadius * cos(currentAngle), -a_fHeight / 2.0, a_fInnerRadius * sin(currentAngle)); //bottomLeft
 		vector3 bottom1 = vector3(a_fInnerRadius * cos(nextAngle), -a_fHeight / 2.0, a_fInnerRadius * sin(nextAngle)); //bottomRight
 		vector3 bottom4 = vector3(a_fOuterRadius * cos(currentAngle), -a_fHeight / 2.0, a_fOuterRadius * sin(currentAngle)); //topLeft
 		vector3 bottom3 = vector3(a_fOuterRadius * cos(nextAngle), -a_fHeight / 2.0, a_fOuterRadius * sin(nextAngle)); //topRight
 		AddQuad(bottom1, bottom2, bottom3, bottom4);
 
+		//top of the tube
 		vector3 top1 = vector3(a_fInnerRadius * cos(currentAngle), a_fHeight / 2.0, a_fInnerRadius * sin(currentAngle)); //bottomLeft
 		vector3 top2 = vector3(a_fInnerRadius * cos(nextAngle), a_fHeight / 2.0, a_fInnerRadius * sin(nextAngle)); //bottomRight
 		vector3 top3 = vector3(a_fOuterRadius * cos(currentAngle), a_fHeight / 2.0, a_fOuterRadius * sin(currentAngle)); //topLeft
@@ -452,60 +454,26 @@ void MyMesh::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a_v3Co
 	//Replace this with your code
 	//GenerateCube(a_fRadius * 2.0f, a_v3Color);
 
-
 	double angle = 2.0 * PI / a_nSubdivisions;
-	int z = 0;
 	for (int i = 0; i < a_nSubdivisions; i++) {
 		double currentAngle = angle * i;
 		double nextAngle = angle * (i + 1);
-		for (int y = 0; y < 4; y++) {
-			vector3 point1;
-			vector3 point2;
-			vector3 point3;
-			vector3 point4;
 
-			if (y > 1) { //stick out
-				point1 = vector3(a_fRadius * cosf(currentAngle), y, (z + a_fRadius) * sinf(currentAngle));
-				point2 = vector3(a_fRadius * cosf(nextAngle), y, (z + a_fRadius) * sinf(nextAngle));
-				z--;
-				point3 = vector3(a_fRadius * cosf(currentAngle), y, (z + a_fRadius) * sinf(currentAngle));
-				point4 = vector3(a_fRadius * cosf(nextAngle), y, (z + a_fRadius) * sinf(nextAngle));
-			}
-			else { //stick in
-				point1 = vector3(0, y, z + a_fRadius * sinf(currentAngle));
-				point2 = vector3(1, y, z + z + a_fRadius * sinf(nextAngle));
-				z++;
-				point3 = vector3(0, y, z + a_fRadius * sinf(currentAngle));
-				point4 = vector3(1, y, z + a_fRadius * sinf(nextAngle));
-			}
+		//top
+		vector3 side1 = vector3(0, a_fRadius, 0); // top center of mesh
+		vector3 side3 = vector3(a_fRadius * cos(currentAngle), a_fRadius / 2.0, a_fRadius * sin(currentAngle));
+		vector3 side2 = vector3(a_fRadius * cos(nextAngle), a_fRadius / 2.0, a_fRadius * sin(nextAngle));
+		AddTri(side1, side2, side3);
 
-			AddQuad(point1, point2, point3, point4);
-			
-		}
+		//bottom
+		vector3 side4 = vector3(0, -a_fRadius, 0); // top center of mesh
+		vector3 side6 = vector3(a_fRadius * cos(currentAngle), -a_fRadius / 2.0, a_fRadius * sin(currentAngle));
+		vector3 side5 = vector3(a_fRadius * cos(nextAngle), -a_fRadius / 2.0, a_fRadius * sin(nextAngle));
+		AddTri(side4, side6, side5);
+
+		//sides
+		AddQuad(side5, side6, side2, side3);
 	}
-
-	//std::vector<std::vector<vector3>> lists = std::vector<std::vector<vector3>>();
-	//for (int i = 0; i < a_nSubdivisions; i++) {
-	//	std::vector<vector3> ring = std::vector<vector3>();
-	//	for (int j = 0; j < a_nSubdivisions; j++){
-	//		double currentAngle = angle * i;
-
-	//		ring.push_back(vector3(a_fRadius * cosf(currentAngle), a_fRadius / 2.0 - (a_fRadius / a_nSubdivisions * i), a_fRadius * sinf(currentAngle)));
-	//	}
-	//	lists.push_back(ring);
-	//}
-	//
-
-	//for (int i = 1; i < a_nSubdivisions - 1; i++) {
-	//	for (int j = 1; j < a_nSubdivisions - 1; j++)
-	//	{
-	//		std::cout << lists[i][j].x << " " << lists[i][j].y  << " " << lists[i][j].z << std::endl;
-	//		std::cout << lists[i][j].length() << std::endl;
-	//		AddQuad(lists[i][j], lists[i][j + 1], lists[i + 1][j], lists[i + 1][j + 1]);
-	//	}
-	//}
-
-
 
 	// -------------------------------
 
