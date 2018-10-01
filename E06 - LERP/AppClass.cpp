@@ -2,7 +2,7 @@
 void Application::InitVariables(void)
 {
 	//Change this to your name and email
-	m_sProgrammer = "Alberto Bobadilla - labigm@rit.edu";
+	m_sProgrammer = "Mitch Steffens - mds4685@rit.edu";
 
 	//Set the position and target of the camera
 	m_pCameraMngr->SetPositionTargetAndUpward(vector3(5.0f,3.0f,15.0f), ZERO_V3, AXIS_Y);
@@ -53,13 +53,25 @@ void Application::Display(void)
 
 	//calculate the current position
 	vector3 v3CurrentPos;
-	
-
-
-
 
 	//your code goes here
-	v3CurrentPos = vector3(0.0f, 0.0f, 0.0f);
+	float fTotalAnimationTime = 1.0f;
+	float fPercentage = fTimer / fTotalAnimationTime;
+	static uint i = 0;
+
+	// move through the points until the last one is reached
+	if (i < m_stopsList.size() - 1) {
+		v3CurrentPos = glm::lerp(m_stopsList[i], m_stopsList[i + 1], fPercentage); //lerp between the current start point and current end point
+
+		// if the point has been reached
+		if (fPercentage >= 1.0f) {
+			i++; // increment to the next points
+			fTimer = 0.0f; // reset the timer
+		}
+	}
+	else {
+		v3CurrentPos = m_stopsList[m_stopsList.size() - 1]; // stop at the final point
+	}
 	//-------------------
 	
 
