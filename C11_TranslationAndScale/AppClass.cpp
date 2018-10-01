@@ -1,10 +1,14 @@
 #include "AppClass.h"
 void Application::InitVariables(void)
 {
+
+	m_sProgrammer = "Mitch Steffens - mds4685@g.rit.edu";
 	//init the mesh
 	m_pMesh = new MyMesh();
 	//m_pMesh->GenerateCube(1.0f, C_WHITE);
 	m_pMesh->GenerateSphere(1.0f, 5, C_WHITE);
+
+	m_pMesh->GenerateCube(0.5f, C_BLACK);
 }
 void Application::Update(void)
 {
@@ -22,6 +26,8 @@ void Application::Display(void)
 	// Clear the screen
 	ClearScreen();
 
+
+
 	matrix4 m4View = m_pCameraMngr->GetViewMatrix();
 	matrix4 m4Projection = m_pCameraMngr->GetProjectionMatrix();
 	
@@ -33,7 +39,9 @@ void Application::Display(void)
 	//matrix4 m4Model = m4Translate * m4Scale;
 	matrix4 m4Model = m4Scale * m4Translate;
 
-	m_pMesh->Render(m4Projection, m4View, m4Model);
+	for (int i = 0; i < 10; i++) {
+		m_pMesh->Render(m4Projection, m4View, m4Model);
+	}
 	
 	// draw a skybox
 	m_pMeshMngr->AddSkyboxToRenderList();
