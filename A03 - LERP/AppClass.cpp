@@ -31,14 +31,33 @@ void Application::InitVariables(void)
 	/*
 		This part will create the orbits, it start at 3 because that is the minimum subdivisions a torus can have
 	*/
+
 	uint uSides = 3; //start with the minimal 3 sides
 	for (uint i = uSides; i < m_uOrbits + uSides; i++)
 	{
 		vector3 v3Color = WaveLengthToRGB(uColor); //calculate color based on wavelength
 		m_shapeList.push_back(m_pMeshMngr->GenerateTorus(fSize, fSize - 0.1f, 3, i, v3Color)); //generate a custom torus and add it to the meshmanager
+
+		//??? static or not ???
+		static std::vector<vector3> stopList;
+
+		float angle = 2.0f * PI / i;  //determine angle between each point
+		std::cout << angle * 180/PI << std::endl;
+		for (uint p = 0; p < i; p++) {
+			float currentAngle = angle * p;
+			vector3 currentPoint = vector3(cosf(currentAngle) * fSize, 0, sinf(currentAngle) * fSize);
+			stopList.push_back(currentPoint);
+		}
+
+		std::cout << "List: " << i << std::endl;
+		for (uint c = 0; c < stopList.size(); c++) {
+			std::cout << "x:" << stopList[c].x << " y:" <<stopList[c].y << " z:" <<stopList[c].z << std::endl;
+		}
+
 		fSize += 0.5f; //increment the size for the next orbit
 		uColor -= static_cast<uint>(decrements); //decrease the wavelength
 	}
+
 }
 void Application::Update(void)
 {
